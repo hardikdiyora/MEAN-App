@@ -1,0 +1,176 @@
+<br><br> 
+
+<div>
+    <ul class="nav nav-pills" style="cursor: pointer">
+      <li [ngClass]="{ 'active': tab == 1 }"><a (click)="tab=1" >Report Defect</a></li>
+      <li [ngClass]="{ 'active': tab == 2 }"><a (click)="tab=2; getIndividual();">Defects reported by me</a></li>
+      <li [ngClass]="{ 'active': tab == 3 }"><a (click)="tab=3; getAll();" >View All Defects</a></li>
+     </ul>
+</div>     
+<hr>
+
+<!-- <popup (confirmClick)="onDeleteConfirm(id)"></popup> -->
+
+
+<form class="form-horizontal" (submit)="onReportSubmit()" *ngIf="tab == 1" style="width:1000px; margin:0 auto;">
+   <div class="form-group"> 
+   <h4 class="page-header">To report defect fill in the detail</h4>
+    <div class="form-group">
+      <div class="col-sm-6">
+      <label>Summary *</label>
+      <input type="summary" [(ngModel)]="summary" name="summary" class="form-control">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-6">
+          <label>Description *</label>
+          <textarea rows="5" [(ngModel)]="description" name="description" class="form-control" placeholder="Write Re-producible Steps"></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-3">
+        <label>Severity</label>
+        <select class="form-control" name="severity" [(ngModel)]="severity">
+            <option *ngFor="let s of nw_severities" value={{s}}>{{s}}</option>
+        </select>
+      </div>
+     <div class="col-sm-3">
+      <label>Hunted Area</label>
+      <select class="form-control" name="components" [(ngModel)]="components">
+            <option *ngFor="let a of hunting_areas" value={{a}}>{{a}}</option>
+      </select>
+     </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-6">
+        <label>Attachments</label>
+        <input type="file" name="attachments" class="form-control" (change)="getFiles($event)" multiple>
+      </div>
+    </div>
+      <input type="submit" class="btn btn-primary" value="Report">
+    </div>
+ </form>
+
+<div *ngIf="tab == 2" style="width:1000px; margin:0 auto;">
+<h4>My Defects</h4>
+<table class="table table-striped table-hover " >
+    <thead>
+    <tr>
+        <th width="10%">Defect ID</th>
+        <th width="60%">Summary</th>
+        <th width="10%">State</th>
+        <th width="20%">Comments</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let def of individual_defect; let $index=index;" style="cursor: pointer" >
+      <td><div (click)="expandRow($index)">D {{def.defectId}}</div></td>
+      <td>
+        <div (click)="expandRow($index)">{{def.summary}} </div>
+        <div *ngIf="$index === expandedIndex">
+          <table class="table">
+                <tr><td colspan="6"></td></tr>
+                <tr>    
+                    <th>Description</th>
+                    <td colspan="4">
+                      <textarea rows="5" [(ngModel)]="def.description" name="description" class="form-control">
+                      </textarea>
+                    </td>
+                    <td>Attachments</td>
+                    <td><a href="/uploads/{{item}}" *ngFor="let $i=index; let item of def.attachments" class="btn btn-link btn-xs" download>{{$i+1}}</a></td>
+                </tr>
+                <tr>    
+                    <th>Severity</th>
+                    <td>
+                      <select class="form-control" name="severity" [(ngModel)]="def.severity">
+                          <option *ngFor="let s of nw_severities" value={{s}}>{{s}}</option>
+                      </select>                      
+                    </td>
+                    <th>Hunted Area</th>
+                    <td>
+                      <select class="form-control" name="components" [(ngModel)]="def.components">
+                            <option *ngFor="let a of hunting_areas" value={{a}}>{{a}}</option>
+                      </select>                      
+                    </td>
+                </tr>
+                <tr>    
+                    <th>Actions</th>
+                    <td>
+
+                      <!-- <button class="btn btn-danger" (click)="onDelete(def._id)">Delete </button>
+ -->
+                      <button class="btn btn-primary btn-sm" (click)="onUpdate(def._id, def)">Update </button>
+                    </td>
+                </tr>
+          </table>          
+        </div>
+      </td>
+      <td><div (click)="expandRow($index)">{{def.state}}</div></td>
+      <td><div (click)="expandRow($index)">{{def.comments}}</div></td>
+    </tr>
+    </tbody>
+</table>
+</div>
+
+
+<div *ngIf="tab == 3" style="width:1000px; margin:0 auto;">
+<h4>All Defects</h4>
+<table class="table table-striped table-hover " *ngIf="tab == 3">
+    <thead>
+    <tr>
+      <td colspan="2">
+      <div class="col-sm-6">
+         <input type="search" class="form-control" [(ngModel)]="sum" name="sum" placeholder="Filter by Summary"></div>
+      </td>
+    </tr>
+      <tr>
+          <th width="10%">Defect ID</th>
+          <th width="60%">Summary</th>
+          <th width="15%">Severity</th>
+          <th width="15%">Area</th>
+      </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let $index=index;let def of all_defects | filter: sum | paginate:{itemsPerPage: 10, currentPage: p}" style="cursor: pointer" >
+        <td><div (click)="expandRow($index)">D {{def.defectId}}</div></td>
+        <td>
+          <div (click)="expandRow($index)">{{def.summary}} </div>
+          <div *ngIf="$index === expandedIndex">
+            <table class="table">
+                  <tr><td colspan="4"></td></tr>
+                  <tr>    
+                      <th width="10%">Description</th>
+                      <td colspan="3">
+                        <textarea rows="5" [(ngModel)]="def.description" name="description" class="form-control">
+                        </textarea>
+                      </td>
+                  </tr>
+                  <tr>
+                      <th width="10%">Attachments</th>
+                      <td width="10%">
+                        <a class="btn btn-link btn-xs" href="/uploads/{{item}}" *ngFor="let $i=index; let item of def.attachments" download>{{$i+1}}</a>
+                      </td>    
+                      <th width="20%">Comments from Admin</th>
+                      <td width="60%">{{def.comments}}</td>
+                  </tr>
+                  <tr>
+                      <th width="10%">Created on</th>
+                      <td colspan="3">{{def.date | date:"MM/dd/yy, h:mma"}}</td>
+                  </tr>
+            </table>          
+          </div>
+          </td>
+        <td><div (click)="expandRow($index)">{{def.severity}}</div></td>
+        <td><div (click)="expandRow($index)">{{def.components}}</div></td>
+    </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6" >
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </td>  
+      </tr>
+    </tfoot>
+</table>
+</div>
+

@@ -1,0 +1,24 @@
+{
+  "name": "hunt",
+  "version": "1.0.0",
+  "description": "NetWitness Hunt Event WebSite",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "express": "*",
+    "jsonwebtoken": "*",
+    "mongoose": "*",
+    "mongoose-auto-increment": "^5.0.1",
+    "multer": "^1.3.0",
+    "passport": "*",
+    "passport-jwt": "*"
+  },
+  "author": "Hardik",
+  "license": "ISC"
+}

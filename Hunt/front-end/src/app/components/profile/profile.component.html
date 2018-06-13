@@ -1,0 +1,31 @@
+ <div *ngIf="user" >
+	 <h4 class="page-header">Hello, Team </h4>
+<table class="table table-striped table-hover " >
+  <tbody>
+    <tr>
+    <th>Team Lead ID</th>
+    <td>{{user.username}}</td>
+    </tr>
+    <tr>
+    <th>Team Members</th>
+    <td>{{user.name}}</td>
+    </tr>
+    <tr>
+    <th>Team Lead Email</th>
+     <td> {{user.email}}</td>
+    </tr>
+    <tr>
+    <th>Department</th>
+      <td>{{user.department}}</td>
+    </tr>
+    <tr>
+    <th>Hunting Areas</th>
+      <td>{{user.area}}</td>
+    </tr>
+    <tr>
+    <th>Office Timezone</th>
+      <td>{{user.office}}</td>
+    </tr>
+  </tbody>
+</table> 
+ </div>

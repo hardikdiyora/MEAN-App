@@ -1,0 +1,210 @@
+<div class="container" *ngIf="secure == false">
+  <div class="row clearfix">
+    <div class="col-md-3 col-md-offset-4 column">
+      <form (submit)="onSecureSubmit()">
+         <h4 class="page-header">Please Provide</h4>
+        <div class="form-group">
+            <label>Secure Key</label>
+            <input type="password" class="form-control" [(ngModel)]="sec" name="sec">
+        </div>
+          <input type="submit" class="btn btn-primary" value="Wel-come">
+      </form>
+   </div>
+  </div>
+</div>
+
+
+
+
+<div *ngIf="secure == true">
+
+<br><br> 
+    <ul class="nav nav-pills" style="cursor: pointer">
+      <li [ngClass]="{ 'active': tab == 1 }"><a (click)="tab=1">Rewards Assessment</a></li>
+      <li [ngClass]="{ 'active': tab == 2 }"><a (click)="tab=2; getUsers()">List of Hunters</a></li>
+      <li [ngClass]="{ 'active': tab == 3 }"><a (click)="tab=3; getDefects()">List of Defects</a></li>
+    </ul>
+<hr>
+
+<popup (confirmClick)="onDeleteConfirm(id)"></popup>
+
+<div *ngIf="tab == 1" style="width:1000px; margin:0 auto;">
+<h4> Rewards Assessment</h4>
+<table class="table table-striped table-hover ">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Team Lead ID</th>
+      <th style="cursor: pointer" (click)="onReverse()">
+        Number of defects 
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let dist of (count_dist_defects | orderBy: total:reverse); let $index=index;" >
+      <td>{{$index+1}} </td>
+      <td>{{dist._id}} </td>
+      <td>{{dist.total}} </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div *ngIf="tab == 2" style="width:1000px; margin:0 auto;">
+<h4>List of Teams</h4>
+<table class="table table-striped table-hover ">
+  <thead>
+    <tr>
+      <th width="10%">Team ID</th>
+      <th width="10%">Team Lead ID</th>
+      <th width="25%">Team Members</th>
+      <th width="15%">Department</th>
+      <th width="25%">Hunting Areas</th>
+      <th width="15%">Timezone</th>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <input type="text" class="form-control" [(ngModel)]="unam" name="unam">
+      </td>
+      <td>
+        <input type="text" class="form-control" [(ngModel)]="nam" name="nam">
+      </td>
+      <td>
+        <input type="text" class="form-control" [(ngModel)]="dep" name="dep">
+      </td>
+      <td>
+        <select class="form-control" name="are" [(ngModel)]="are">
+            <option *ngFor="let a of hunting_areas" value={{a}}>{{a}}</option>
+        </select>
+      </td>
+      <td>
+       <select class="form-control" name="off" [(ngModel)]="off">
+            <option *ngFor="let o of offices" value={{o}}>{{o}}</option>
+        </select>
+      </td>
+    </tr>
+
+  </thead>
+  <tbody>
+    <tr *ngFor="let u of (all_users | filterhunter: unam:nam:are:off:dep); let $index=index; " >
+      <td>U {{u.userId}}</td>
+      <td>{{u.username}}</td>
+      <td>{{u.name}}</td>
+      <td>{{u.department}}</td>
+      <td>{{u.area}}</td>
+      <td>{{u.office}}</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<div *ngIf="tab == 3" style="width:1000px; margin:0 auto;">
+<h4> List of Defects</h4>
+
+<table class="table table-striped table-hover " >
+    <thead>
+    <tr>
+        <th width="10%">Defect ID</th>
+        <th width="40%">Summary</th>
+        <th width="20%">Severity</th>
+        <th width="15%">State of Defect</th>
+        <th width="15%">Area</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+          <input type="text" class="form-control" [(ngModel)]="sum" name="sum" placeholder="Filter by Summary">
+        </td>
+        <td>
+          <select class="form-control" name="sev" [(ngModel)]="sev">
+              <option *ngFor="let s of nw_severities" value={{s}}>{{s}}</option>
+          </select> 
+        </td>
+        <td>
+          <select class="form-control" name="sta" [(ngModel)]="sta">
+              <option *ngFor="let p of defect_state" value={{p}}>{{p}}</option>
+          </select>
+        </td>
+        <td>
+          <select class="form-control" name="are" [(ngModel)]="are">
+              <option *ngFor="let a of hunting_areas" value={{a}}>{{a}}</option>
+          </select>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let $index=index; let def of (all_defects | filter: sum:sev:sta:are) | paginate:{itemsPerPage: 10, currentPage: p}" style="cursor: pointer" >
+      <td><div (click)="expandRow($index)">D {{def.defectId}}</div></td>
+      <td>
+        <div (click)="expandRow($index)">
+        {{def.summary}} 
+        </div>
+        <div *ngIf="$index === expandedIndex">
+          <table class="table">
+                <tr><td colspan="6"></td></tr>
+                <tr>    
+                    <th>Description</th>
+                    <td colspan="5">
+                      <textarea rows="5" [(ngModel)]="def.description" name="description" class="form-control">
+                      </textarea>
+                    </td>
+                </tr>
+                <tr>    
+                    <th>Severity</th>
+                    <td colspan="2">
+                    <select class="form-control" name="severity" [(ngModel)]="def.severity">
+                          <option *ngFor="let s of nw_severities" value={{s}}>{{s}}</option>
+                      </select>       
+                    </td>
+                    <th>Attachments</th>
+                    <td>
+                      <a href="/uploads/{{item}}" *ngFor="let $i=index; let item of def.attachments" class="btn btn-link btn-xs" download>{{$i+1}}</a>
+                    </td>
+                </tr>
+                <tr>
+                  <th>Comment</th>
+                    <td colspan="3">
+                      <textarea rows="3" [(ngModel)]="def.comments" name="description" class="form-control">
+                      </textarea>
+                    </td>
+                </tr>
+                <tr>    
+                    <th>State of Defect</th>
+                    <td colspan="2">
+                      <select class="form-control" name="severity" [(ngModel)]="def.state">
+                          <option *ngFor="let s of defect_state" value={{s}}>{{s}}</option>
+                      </select>                      
+                    </td>
+                </tr>
+                <tr>
+                    <th>Created On</th>
+                    <td colspan="2">{{def.date | date:"MM/dd/yy h:mma"}} </td>
+                    <td>
+                      <button class="btn btn-primary btn-sm" (click)="onUpdate(def._id, def)">Update </button>                      
+                    </td>
+                    <td>
+                      <button class="btn btn-danger btn-sm" (click)="onDelete(def._id)">Delete </button>
+                    </td>
+                </tr>
+          </table>          
+        </div>
+      </td>
+      <td><div (click)="expandRow($index)">{{def.severity}}</div></td>
+      <td><div (click)="expandRow($index)">{{def.state}}</div></td>
+      <td><div (click)="expandRow($index)">{{def.components}}</div></td>
+    </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" >
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </td>  
+      </tr>
+    </tfoot>
+</table>
+
+</div>
+
+</div>

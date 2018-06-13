@@ -1,0 +1,57 @@
+  <form class="form-horizontal" (submit)="onRegisterSubmit()" style="width:800px; margin:0 auto;">
+   <div class="form-group"> 
+   <h4 class="page-header">Registration Form</h4>
+    <div class="form-group">
+      <div class="col-sm-2">
+        <label>Team Lead ID *</label>
+        <input type="text" [(ngModel)]="username" name="username" class="form-control">
+      </div>
+      <div class="col-sm-4">
+        <label>Team Lead Email *</label>
+        <input type="text" [(ngModel)]="email" name="email" class="form-control" >
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-6">
+          <label>Team Members Name *</label>
+          <textarea rows="3" [(ngModel)]="name" name="name" class="form-control" placeholder="Member1.."></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-3">
+        <label>Department *</label>
+    	  <select class="form-control" name="department" [(ngModel)]="department">
+    	      <option *ngFor="let dept of departments" value={{dept}}>{{dept}}</option>
+    	  </select>
+      </div>
+      <div class="col-sm-3">
+        <label>Timezone *</label>
+        <select class="form-control" name="office" [(ngModel)]="office">
+            <option *ngFor="let o of offices" value={{o}}>{{o}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" *ngIf="department==='Others'">
+      <div class="col-sm-3">
+        <label>Specify Other Department</label>
+        <input type="text" [(ngModel)]="other_department" name="other_department" class="form-control" >
+      </div>
+    </div>
+    <div class="form-group">
+     <div class="col-sm-6">
+      <label>Hunting Area *</label>
+        <angular2-multiselect [data]="dropdownList" [(ngModel)]="selectedItems" 
+            name="selectedItems"
+            [settings]="dropdownSettings" 
+            (onSelect)="onItemSelect($event)" 
+            (onDeSelect)="OnItemDeSelect($event)">
+        </angular2-multiselect>
+     </div>
+    </div>
+      <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+ </form>
+
+<form>
+</form>
+ 
